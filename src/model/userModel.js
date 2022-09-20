@@ -2,9 +2,9 @@ const { default: mongoose } = require("mongoose");
 
 const userSchema=new mongoose.Schema({ 
     title: {
-        type:string, 
+        type:String, 
         require:true, 
-        enum:[Mr, Mrs, Miss]
+        enum:["Mr", "Mrs", "Miss"]
     },
     name: {
         type:String,
@@ -16,7 +16,7 @@ const userSchema=new mongoose.Schema({
         unique:true
     },
     email: {
-        type:string,
+        type:String,
         require:true,
         unique:true
     }, 
