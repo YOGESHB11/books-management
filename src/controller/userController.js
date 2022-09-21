@@ -1,4 +1,5 @@
 const userModel = require("../model/userModel");
+
 const validator = require("../validators/validator")
 const jwt = require("jsonwebtoken")
 
@@ -59,9 +60,12 @@ const loginUser = async function (req, res) {
     try {
       let emailId = req.body.email;
       let password = req.body.password;
-        
-      let User = await userModel.findOne({email : emailId , password : password})
-      let findEmail = await userModel.findOne({ email: emailId});
+      //destructure
+      //check for req.body 
+      //email validation and password validation
+      let User = await userModel.findOne({email : emailId , password : password}) //only req.body
+      //if(!user)  response
+      let findEmail = await userModel.findOne({ email: emailId});  //wrong method should be only one db call
       let findPassword = await userModel.findOne({password : password})
       if (!emailId) {
         return res.status(400).send({
@@ -96,7 +100,7 @@ const loginUser = async function (req, res) {
             exp : Math.floor(Date.now() / 1000) +60*60
 
         },
-        "functionup-plutonium-blogging-Project1-secret-key"
+        "functionup-plutonium-blogging-Project3-secret-key"
       );
     //   res.setHeader("x-api-key", token);
       res.send({ status: true,msg:"login successful", token: token });
@@ -105,6 +109,7 @@ const loginUser = async function (req, res) {
     }
   };
 
+  
 
 
   

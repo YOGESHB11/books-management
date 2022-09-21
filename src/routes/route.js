@@ -1,11 +1,16 @@
 const express = require("express")
 const router = express.Router()
 const userController = require("../controller/userController")
+const bookController = require("../controller/bookController")
 
 router.post("/register" , userController.createUser)
 
 router.post("/login" , userController.loginUser)
 
-router.all("/*",(req,res)=>{res.status(404).send({status:false,message:"Endpoint is not correct"})})
+router.post("/books" , bookController.createBook)
+
+router.get("/books" , bookController.getBooks)
+
+router.get("/books/:bookId" , bookController.getBooksById)
 
 module.exports = router
