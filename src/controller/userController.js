@@ -1,4 +1,5 @@
 const userModel = require("../model/userModel");
+
 const validator = require("../validators/validator")
 const jwt = require("jsonwebtoken")
 
@@ -108,6 +109,7 @@ const loginUser = async function (req, res) {
     }
   };
 
+  
 
 
   
