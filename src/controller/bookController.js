@@ -17,6 +17,9 @@ const createBook = async function(req,res){
     
     if(!title){return res.status(400).send({status : false, msg : "Please provide title"})}
     if(!isValid(title)){return res.status(400).send({status : false, msg : "Please provide a valid title"})}
+    let findTitle = await bookModel.findOne({title : title})
+    if(findTitle){return res.status(400).send({status : false, msg : "title should be unique"})}
+    title = title.trim();
 
     if(!excerpt){return res.status(400).send({status : false, msg : "Please provide excerpt"})}
     if(!isValid(excerpt)){return res.status(400).send({status : false, msg : "Please provide a valid excerpt"})}
@@ -29,6 +32,8 @@ const createBook = async function(req,res){
 
     if(!ISBN){return res.status(400).send({status : false, msg : "Please provide ISBN"})}
     if(!validISBN(ISBN)){return res.status(400).send({status : false, msg : "Please provide a valid ISBN"})}
+    let findISBN = await bookModel.findOne({ISBN : ISBN})
+    if(findISBN){return res.status(400).send({status : false, msg : "This ISBN already exist"})}
 
     if(!category){return res.status(400).send({status : false, msg : "Please provide Book's category"})}
     if(!isValid(category)){return res.status(400).send({status : false, msg : "Please provide a valid category"})}
@@ -41,22 +46,13 @@ const createBook = async function(req,res){
      if(!isNumber(reviews)) {return res.status(400).send({status : false, msg : "Please provide reviews in number format"})}
 
     }
-    console.log(releasedAt)
-    let newDate = releasedAt
-    let dupTitle = await bookModel.findOne({title : title})
-    if(dupTitle){
-        return res.status(409).send({status : true , message : "Book with this title already exists"})
+    if(!releasedAt){return res.status(400).send({status : false, msg : "Please provide Book's date"})}
+    // if(!validreleaseat(releasedAt)){return res.status(400).send({status : false, msg : "Please provide a valid date"})}
+    if (!/^(18|19|20)[0-9]{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(releasedAt)) {
+        return res.status(400).send({ status: false, message: "Released date is not valid it should be YYYY-MM-DD" })
     }
-    let dupISBN = await bookModel.findOne({ISBN : ISBN})
-    if(dupISBN){
-        return res.status(409).send({status : true , message : "Book with this ISBN already exists"})
-    }
-    
+
     let newBook = await bookModel.create(data)
-    let findBook = await bookModel.findOne(data).select({__v:0,createdAt :0,updatedAt:0,releasedAt :0})
-    
-    //findBook["releasedAt"] = newDate
-    console.log(findBook)
     // let filterBook = await 
     {return res.status(201).send({status : true, msg : "Success", data : newBook})}
 
@@ -65,7 +61,7 @@ const createBook = async function(req,res){
 }
 
 }
-module.exports.createBook = createBook
+//module.exports.createBook = createBook
 
 // const userModel = require('../model/userModel')
 // const validator = require('../validators/validator.js');
