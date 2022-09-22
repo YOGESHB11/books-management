@@ -90,8 +90,11 @@ const getBooksById = async function(req,res){
           return res.status(400).send({status : false , message : "Please provide a valid bookId"})
         }
         let books = await bookModel.findOne({_id : bookId , isDeleted : false}).select({__v : 0 , deletedAt : 0})
-        if(!books || !validator.isValidRequestBody(books)){
+        if(!books){
           return res.status(404).send({status : false , message : `Book with bookId:${bookId} is not present...`})
+        }
+        if(!validator.isValidRequestBody(books)){
+            return res.status(404).send({status : false , message : `Provide a valid bookId`})
         }
 
         let {_id,title,excerpt,userId,ISBN,category,subcategory,reviews,isDeleted,createdAt,updatedAt} = books
