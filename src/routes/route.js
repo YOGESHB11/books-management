@@ -18,4 +18,6 @@ router.put("/books/:bookId" , auth.Authentication ,auth.Authorisation , bookCont
 
 router.delete("/books/:bookId",auth.Authentication , auth.Authorisation,bookController.deleteBookById)
 
+router.delete("/books/:bookId/review/:reviewId",bookController.deleteByReview)
+
 module.exports = router

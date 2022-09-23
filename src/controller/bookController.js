@@ -197,4 +197,23 @@ const deleteBookById = async (req, res) => {
 }
 
 
-  module.exports = {getBooksById,getBooks,createBook, updateBooks,deleteBookById}
+//--------------------------------------delete-----------------------
+
+const deleteByReview = async function (req,res){
+   data= req.params
+   reviewId = data.reviewId
+   bookID = data.bookId
+
+   const findReviewId = await reviewModel.findOne({_id : reviewId})
+   if(!findReviewId) return res.status(404).send({status :false, msg:"review not found"})
+   if(findReviewId.isDeleted==true) return res.status(404).send({status : false, msg : "this review is already deleted"})
+   if(findReviewId.bookId!== bookID.toString()) return res.status(400).send({status : false, msg : ""})
+   
+   const deletereview = await reviewModel.findByIdAndUpdate(reviewId, { $set: { isDeleted: true } }, { new: true });
+   const reviewCount = await reviewModel.find({bookId : bookID}).count()
+   const findBook = await bookModel.findOne({_id : bookID})
+   findBook.reviews = reviewCount-1
+   return res.status(200).send({status : true , msg : " review deleted successfully"})
+}
+
+  module.exports = {getBooksById,getBooks,createBook, updateBooks,deleteBookById,deleteByReview}
