@@ -28,7 +28,7 @@ const bookSchema=new mongoose.Schema({
         required:true,
     },
     subcategory: {
-        type:[String],
+        type:String,
         required:true,
      },
     reviews: {
@@ -44,6 +44,8 @@ const bookSchema=new mongoose.Schema({
     releasedAt: {
         type:Date, 
         required:true,
+        format : "YYYY-MM-DD"
+
     }     
   },
   {timestamps:true}
