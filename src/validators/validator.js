@@ -78,6 +78,12 @@ const isNotEmpty = function (value) {
   return false;
 }
 
+const isValidRating = function(rating){
+  if (
+    /^[1-5]{1}$/.test(rating)
+) return true;
+return false;
+}
 const isWrong = function (value) {
   if (value.match(/^[a-zA-Z0-9, ]*$/)) return true;
   return false;
@@ -98,5 +104,6 @@ module.exports = {
   isNumber,
   isValidDate,
   isNotEmpty,
-  isWrong
+  isWrong,
+  isValidRating
 };

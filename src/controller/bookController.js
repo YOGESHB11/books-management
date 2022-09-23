@@ -53,8 +53,8 @@ const createBook = async function(req,res){
     }
 
     let newBook = await bookModel.create(data)
-    // let filterBook = await 
-    {return res.status(201).send({status : true, msg : "Success", data : newBook})}
+    let filterBook = await bookModel.findOne(newBook).select({__v:0})
+    {return res.status(201).send({status : true, msg : "Success", data : filterBook})}
 
 } catch(err){
     return res.status(500).send({status : false, msg : err.message})
@@ -103,8 +103,9 @@ const getBooksById = async function(req,res){
 
         let filter = {_id,title,excerpt,userId,ISBN,category,subcategory,reviews,isDeleted,createdAt,updatedAt,reviewData:findReviews};
 
-        let reviewCount =  await reviewModel.findById(bookId).count();
-        filter.reviews = reviewCount;
+        // let reviewCount =  await reviewModel.findById(bookId).count();
+        // console.log(reviewCount)
+        // filter.reviews = reviewCount;
         res.status(200).send({status : true  , message : "Book list" , data : filter })
     } catch (error) {
       return res.status(500).send({ status: false, msg: error.message })

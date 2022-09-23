@@ -64,7 +64,7 @@ const createUser = async function(req,res){
       
         filter["_id"] = created._id;
         filter["title"] = created.title;
-        filter["excerpt"] = created.excerpt;
+        //filter["excerpt"] = created.excerpt;
         filter["name"] = created.name;
         filter["phone"] = created.phone;
         filter["email"] = created.email;
