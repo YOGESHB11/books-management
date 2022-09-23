@@ -64,7 +64,6 @@ const createUser = async function(req,res){
       
         filter["_id"] = created._id;
         filter["title"] = created.title;
-        //filter["excerpt"] = created.excerpt;
         filter["name"] = created.name;
         filter["phone"] = created.phone;
         filter["email"] = created.email;
@@ -72,10 +71,7 @@ const createUser = async function(req,res){
         filter["address"] = created.address;
         filter["createdAt"] = created.createdAt;
         filter["updatedAt"] = created.updatedAt;
-      // const filteredData = await userModel.findOne(created).select({__v:0})
-      //let filter = {created}
-      //const filteredData = await userModel.findOne(created).select({_id:1,title:1,name:1,phone:1,email:1,password:1,address:1,createdAt:1,updatedAt:1})
-      //let filter = {title,name,phone,email,password,address,}
+    
       res.status(201).send({status : true , message : "User successfully created" , data : filter});
   }catch(err){
       res.status(500).send({msg : err.message})
@@ -117,21 +113,18 @@ const loginUser = async function (req, res) {
         {
           UserId: user._id.toString(),
           Team: "Group 2",
-          organisation: "FunctionUp",
-          iat : Math.floor(Date.now() / 1000),
-            exp : Math.floor(Date.now() / 1000) +60*60
-
+          organisation: "FunctionUp"
+        
         },
-        "functionup-plutonium-blogging-Project1-secret-key"
+        "functionup-plutonium-blogging-Project1-secret-key",{ expiresIn: '24h'  }
       );
-      res.send({ status: true,msg:"login successful", token: token });
+      
+      res.send({ status: true,msg:"login successful", data : {token: token ,UserId: user._id.toString(), iat : new Date() ,expiresIn: '24h' }});
     } catch (error) {
       return res.status(500).send({ status: false, msg: error.message })
     }
   };
-
   
-
 
   
 module.exports = {createUser,loginUser}

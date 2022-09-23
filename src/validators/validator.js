@@ -89,6 +89,11 @@ const isWrong = function (value) {
   return false;
 }
 
+const isValidReviewer=function(reviewedBy){
+  if (/^[a-zA-Z,\-.\s]*$/.match(reviewedBy)) return  true
+  return false;
+  }
+
 module.exports = {
   isValid,
   isValidTitle,
@@ -105,5 +110,6 @@ module.exports = {
   isValidDate,
   isNotEmpty,
   isWrong,
-  isValidRating
+  isValidRating,
+  isValidReviewer
 };
