@@ -2,64 +2,103 @@ const userModel = require("../model/userModel");
 const validator = require("../validators/validator")
 const jwt = require("jsonwebtoken")
 
+//----------------create user------------------------
 
 const createUser = async function(req,res){
   try{
+
       let data = req.body;
+    
+      //------------- validating request body--------------------
+
       if(!validator.isValidRequestBody(data)){
           return res.status(400).send({status : false , message : "PLease provide a valid request body"})
       }
+
+      //------------- destructring-------------------------------
+
       let  {title,name,phone,email,password,address} = data;
-     
-      
+
+     //---------------validation starts -------------------------
+
+    //------------- title validation----------------------------
+
       if (!title) return res.status(400).send({status :false, msg: "title is requried" })
-      if (!validator.isNotEmpty(title)) return res.status(400).send({status :false, msg: "title is empty" })
+      if(!validator.isValidTitle(title.trim())) return res.status(400).send({status :false, msg: "Must use only Mr,Mrs and Miss.." })
       data.title = title.trim()
-      let arr = ["Mr", "Mrs", "Miss"]
-      if (!arr.includes(data.title)) return res.status(400).send({status :false, msg: "use only Mr, Mrs, Miss" })
-      
-      // name validation
-      if (!name) return res.send({status :false, msg: "name is requried" })
+
+      //-------------- name validation---------------------
+
+      if (!name) return res.status(400).send({status :false, msg: "name is requried" })
       if (!validator.isNotEmpty(name)) return res.status(400).send({status :false, msg: "name is required" })
       data.name = name.trim()
       if (!validator.isWrong(data.name)) return res.status(400).send({status :false, msg: "name is not valid" })
-      
-      if (!validator.isNotEmpty(phone)) return res.status(400).send({status :false, msg: "phone No. is required" })
+
+      //-------------- phone no. validation---------------------
+
+      if (!phone) return res.status(400).send({status :false, msg: "phone no. is requried" })
+      //if(!validator.isNumber)
+      if (!validator.isValid(phone)) return res.status(400).send({status :false, msg: "phone no must be of type string and should not be empty" })
       data.phone = phone.trim()
       if(!validator.isValidMobile(data.phone)){
           return res.status(400).send({status : false , message : "PLease provide a valid phone number of length 10"})
       }
      
+      //----------------email validation-----------------------
+
       if (!validator.isNotEmpty(email)) return res.status(400).send({status :false, msg: "email is required" })
       data.email = email.trim()
       if(!validator.isValidEmail(data.email)){
           return res.status(400).send({status : false , message : "Please provide a valid email ID"})
       }
-      const findEmail = await userModel.findOne({email : email});
-      if(findEmail){
-          return res.status(409).send({status : false , message : "User with this email Id alredy exists."})
-      }
      
+      //----------------password validation-----------------------
+
+      if(!password) return res.status(400).send({status :false, msg: "password is required" })
       if (!validator.isNotEmpty(password)) return res.status(400).send({status :false, msg: "password is required" })
       data.password = password.trim()
       if(!validator.isValidPassword(data.password)){
           return res.status(400).send({status : false , message : "Password must contain an uppercase,a lowercase , a special character and should be of length between 8-15"})
       }
-      const findPhone = await userModel.findOne({phone : phone});
-      if(findPhone){
-          return res.status(409).send({status : false , message : "User with this phone number already exists"})
-      }
 
-      if (!address.street.match(/^[a-zA-Z0-9\s,.'-/ ]{3,}$/)) return res.status(400).send({status : false , message : "please provide valid street address."})
+      //---------------address validation-------------------------
+
+      if(address){
+
+       if(!validator.isValidRequestBody(address)){
+        return res.status(400).send({status : false , message : "Please provide valid body for address "})
+      }
+        if (!validator.isValidStreet(address.street)) return res.status(400).send({status : false , message : "please provide valid street address."})
       if(!validator.isValidPincode(address.pincode)){
           return res.status(400).send({status : false , message : "Pincode should be of length 6 only."})
       }
       data.address.street = address.street.trim()
       data.address.city = address.city.trim()
 
-      const created = await userModel.create(data)
-      console.log(created)
+    }
+
+    //---------------- check for duplicacy---------------------
+
+    //----------------duplicacy for phone no.------------------
+
+      const findPhone = await userModel.findOne({phone : phone});
+      if(findPhone){
+          return res.status(409).send({status : false , message : "User with this phone number already exists"})
+      }
+
+       //----------------duplicacy for email ------------------
+
+      const findEmail = await userModel.findOne({email : data.email});
+      if(findEmail){
+          return res.status(409).send({status : false , message : "User with this email Id alredy exists."})
+      }
       
+      //----------------creation starts ----------------------
+
+      const created = await userModel.create(data)
+      
+      //-----------------filtering data for response-----------
+
       let filter = {}
       
         filter["_id"] = created._id;
@@ -78,6 +117,7 @@ const createUser = async function(req,res){
   }
 }
 
+//---------------login user ----------------------
 
 const loginUser = async function (req, res) {
     try {
@@ -90,12 +130,23 @@ const loginUser = async function (req, res) {
     }
    
     let { email, password } = requestBody;
+    if(!email){
+      return res.status(400).send({
+        status: false,
+        message: `Email is required`
+      });
+    }
     if (!validator.isValidEmail(email)) {
       return res.status(400).send({
         status: false,
-        message: `Email is mandatory and provide valid email address`,
+        message: `Provide valid email address`,
       });
-    
+    }
+    if(!password){
+      return res.status(400).send({
+        status: false,
+        message: `Password is required`
+      });
     }
     if (!validator.isValidPassword(password)) {
       return res.status(400).send({
@@ -116,10 +167,10 @@ const loginUser = async function (req, res) {
           organisation: "FunctionUp"
         
         },
-        "functionup-plutonium-blogging-Project1-secret-key",{ expiresIn: '24h'  }
+        "functionup-plutonium-blogging-Project1-secret-key",{ expiresIn: '1h'  }
       );
       
-      res.send({ status: true,msg:"login successful", data : {token: token ,UserId: user._id.toString(), iat : new Date() ,expiresIn: '24h' }});
+      res.send({ status: true,msg:"login successful", token: token });
     } catch (error) {
       return res.status(500).send({ status: false, msg: error.message })
     }

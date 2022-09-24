@@ -57,6 +57,12 @@ const isValidPincode = function(data){
     ) return true;
     return false;
 }
+const isValidStreet = function(data){
+  if (
+    /^[a-zA-Z0-9\s,.' ]{3,}$/.test(data)
+) return true;
+return false;
+}
 const validISBN= function (value) {
   if ((value.match(/^(?:ISBN(?:-13)?:?\ )?(?=[0-9]{13}$|(?=(?:[0-9]+[-\ ]){4})[-\ 0-9]{17}$)97[89][-\ ]?[0-9]{1,5}[-\ ]?[0-9]+[-\ ]?[0-9]+[-\ ]?[0-9]$/)) )return true;
   return false;
@@ -111,5 +117,6 @@ module.exports = {
   isNotEmpty,
   isWrong,
   isValidRating,
-  isValidReviewer
+  isValidReviewer,
+  isValidStreet
 };

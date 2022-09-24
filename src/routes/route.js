@@ -9,7 +9,7 @@ router.post("/register" , userController.createUser)
 
 router.post("/login" , userController.loginUser)
 
-router.post("/books" ,auth.Authentication , auth.Authorisation, bookController.createBook)
+router.post("/books" ,auth.Authentication , auth.Authorisation , bookController.createBook)
 
 router.get("/books" , bookController.getBooks)
 
@@ -24,5 +24,7 @@ router.post("/books/:bookId/review",reviewController.createReviews)
 router.put("/books/:bookId/review/:reviewId", reviewController.updateReview)
 
 router.delete("/books/:bookId/review/:reviewId", reviewController.deleteByReview)
+
+router.all("/*",(req,res)=>{res.status(400).send({status:false,message:"Endpoint is not correct"})})
 
 module.exports = router

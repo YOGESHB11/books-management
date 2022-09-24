@@ -44,25 +44,28 @@ const Authentication = function (req, res, next) {
             }
   
   
-            return next()
+            
         }
-  
-  
-        let data = req.body.userId
-        
-        if (data.trim().length == 0) { return res.status(400).send({ status: false, message: "Please insert valid userId." }) }
-        if (!validator.isValidObjectId(data)) { return res.status(400).send({ status: false, message: `This UserId: ${data} is not Valid.` }) }
-  
-        const checkUserId = await userModel.findOne({ _id: data, isDeleted: false })
-        if (!checkUserId) { return res.status(400).send({ status: false, message: `This UserId: ${data} is not Exist.` }) }
-  
-        if (checkUserId['_id'].toString() !== decodedToken.UserId) {
-            return res.status(403).send({ status: false, message: "Unauthorized User Access!" })
-        }
-  
-        // return
-        next()
+        next();
+        // if(!req.body){
+        //   return next()
         // }
+        
+        // let data = req.body.userId
+        
+        // //if (data.trim().length == 0) { return res.status(400).send({ status: false, message: "Please insert valid userId." }) }
+        // if (!validator.isValidObjectId(data)) { return res.status(400).send({ status: false, message: `This UserId: ${data} is not Valid.` }) }
+  
+        // const checkUserId = await userModel.findOne({ _id: data, isDeleted: false })
+        // if (!checkUserId) { return res.status(400).send({ status: false, message: `This UserId: ${data} is not Exist.` }) }
+  
+        // if (checkUserId['_id'].toString() !== decodedToken.UserId) {
+        //     return res.status(403).send({ status: false, message: "Unauthorized User Access!" })
+        // }
+  
+        // // return
+        // next()
+        // // }
   
   
   
