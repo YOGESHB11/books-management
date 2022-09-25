@@ -46,8 +46,7 @@ const createReviews = async function (req, res) {
             return res.status(400).send({ status: false, message: "Provide valid review details .." })
         }
         requestBody.review = review.trim()
-        console.log(rating)
-        if (!rating && rating != 0) return res.status(400).send({ status: false, message: "Rating is missing" })
+        if (!rating && rating != 0) return res.status(400).send({ status: false, message: "Rating is missing" })//0 =null
 
         if (typeof rating !== 'number' || rating < 1 || rating > 5 )
             return res.status(400).send({ status: false, message: 'Rating should be an Integer & between 1 to 5' })
