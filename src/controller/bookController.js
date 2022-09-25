@@ -1,3 +1,5 @@
+//-----------------------------------------importing--------------------------------------------------------
+
 const bookModel = require("../model/bookModel")
 const reviewModel = require("../model/reviewModel")
 const validator = require("../validators/validator")
@@ -82,6 +84,8 @@ const createBook = async function (req, res) {
 
 }
 
+//-----------------------------------------getBooks--------------------------------------------------------
+
 const getBooks = async function (req, res) {
     try {
         let data = req.query
@@ -121,7 +125,7 @@ const getBooks = async function (req, res) {
     catch (error) { res.status(500).send({ status: false, message: error.message }) }
 
 }
-
+//-----------------------------------------getBooksById--------------------------------------------------------
 const getBooksById = async function (req, res) {
     try {
         let bookId = req.params.bookId
@@ -146,6 +150,8 @@ const getBooksById = async function (req, res) {
         return res.status(500).send({ status: false, msg: error.message })
     }
 }
+
+//-----------------------------------------update books--------------------------------------------------------
 
 const updateBooks = async function (req, res) {
     try {
@@ -213,6 +219,7 @@ const updateBooks = async function (req, res) {
     }
 }
 
+//------------------------------------delete books by Id----------------------------------------------
 const deleteBookById = async (req, res) => {
     try {
         let bookId = req.params.bookId;
@@ -229,5 +236,6 @@ const deleteBookById = async (req, res) => {
     }
 }
 
+//------------------------------export modules--------------------------------------------------------------------
 
 module.exports = { getBooksById, getBooks, createBook, updateBooks, deleteBookById }

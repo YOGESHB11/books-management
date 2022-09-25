@@ -1,8 +1,11 @@
+//---------------------------------------importing modules--------------------------------------------
+
 const mongoose = require("mongoose")
 const bookModel = require("../model/bookModel")
 const reviewModel = require("../model/reviewModel")
 const validator = require("../validators/validator")
 
+//-------------------------create review------------------------------------------------
 const createReviews = async function (req, res) {
     try {
 
@@ -76,6 +79,8 @@ const createReviews = async function (req, res) {
 
 let { isValidObjectId, isValidReviewer } = validator
 
+//--------------------------------update review-------------------------------------------------------------------
+
 const updateReview = async function (req, res) {
     try {
         let data = req.body
@@ -128,6 +133,8 @@ const updateReview = async function (req, res) {
 
 }
 
+//----------------------------------------deleteByReview---------------------------------------------------------------
+
 const deleteByReview = async function (req, res) {
 
     try {
@@ -171,6 +178,7 @@ const deleteByReview = async function (req, res) {
 
 }
 
+//-------------------------exporting modules------------------------------------------------
 
 module.exports = { createReviews, updateReview, deleteByReview }
 
