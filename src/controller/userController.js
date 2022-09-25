@@ -45,8 +45,8 @@ const createUser = async function (req, res) {
     }
 
     //----------------email validation-----------------------
-
-    if (!validator.isNotEmpty(email)) return res.status(400).send({ status: false, msg: "email is required" })
+    if(!email) return res.status(400).send({ status: false, msg: "email is required" })
+    if (!validator.isNotEmpty(email)) return res.status(400).send({ status: false, msg: "email should not be empty" })
     data.email = email.trim()
     if (!validator.isValidEmail(data.email)) {
       return res.status(400).send({ status: false, message: "Please provide a valid email ID" })
@@ -63,18 +63,25 @@ const createUser = async function (req, res) {
 
     //---------------address validation-------------------------
 
-    if (address) {
-
+    if (Object.keys(data).some(a => a == "address")) {
+      if(typeof address !== "object") return res.status(400).send({status: false, message: "Address should be in object format"})
       if (!validator.isValidRequestBody(address)) {
         return res.status(400).send({ status: false, message: "Please provide valid body for address " })
       }
+      
+      if(!address.street) return res.status(400).send({ status: false, message: "Please provide street " })
       if (!validator.isValidStreet(address.street)) return res.status(400).send({ status: false, message: "please provide valid street address." })
+      data.address.street = address.street.trim()
+
+      if(!address.city) return res.status(400).send({ status: false, message: "Please provide city " })
+      if (!validator.isValidCity(address.city)) return res.status(400).send({ status: false, message: "please provide valid city name" })
+      data.address.city = address.city.trim()
+
+      if(!address.pincode) return res.status(400).send({ status: false, message: "Please provide pincode " })
       if (!validator.isValidPincode(address.pincode)) {
         return res.status(400).send({ status: false, message: "Pincode should be of length 6 only." })
       }
-      data.address.street = address.street.trim()
-      data.address.city = address.city.trim()
-
+      
     }
 
     //---------------- check for duplicacy---------------------
@@ -186,7 +193,7 @@ const loginUser = async function (req, res) {
       "functionup-plutonium-blogging-Project1-secret-key", { expiresIn: '1h' }
     );
 
-    res.send({ status: true, msg: "login successful", data: { token: token, userId: user._id } });
+    res.send({ status: true, msg: "login successful", data: { token: token, userId: user._id , iat : Date.now() ,  expiresIn: '1h' } });
 
   } catch (error) {
     return res.status(500).send({ status: false, msg: error.message })

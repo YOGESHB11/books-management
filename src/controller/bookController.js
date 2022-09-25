@@ -111,7 +111,7 @@ const getBooks = async function (req, res) {
             return res.status(200).send({ status: true, message: "Books list", data: filter })
         }
 
-        let filter = await bookModel.find(data, { isDeleted: false }).select({ "deletedAt": 0, "ISBN": 0, "__v": 0, "createdAt": 0, "updatedAt": 0,"subcategory" :0 }).sort({ title: 1 })
+        let filter = await bookModel.find({ $and: [data, { isDeleted: false }] }).select({ "deletedAt": 0, "ISBN": 0, "__v": 0, "createdAt": 0, "updatedAt": 0,"subcategory" :0 }).sort({ title: 1 })
         if (!filter.length){
             return res.status(404).send({ status: false, msg: "No such documents found" })
         }
@@ -125,17 +125,16 @@ const getBooks = async function (req, res) {
 const getBooksById = async function (req, res) {
     try {
         let bookId = req.params.bookId
+
         if (!validator.isValidObjectId(bookId)) {
             return res.status(400).send({ status: false, message: "Please provide a valid bookId" })
         }
         let books = await bookModel.findOne({ _id: bookId, isDeleted: false }).select({ __v: 0, deletedAt: 0 })
+
         if (!books) {
             return res.status(404).send({ status: false, message: `Book with bookId:${bookId} is not present...` })
         }
-        if (!validator.isValidRequestBody(books)) {
-            return res.status(404).send({ status: false, message: `Provide a valid bookId` })
-        }
-
+  
         let { _id, title, excerpt, userId, ISBN, category, subcategory, reviews, isDeleted, createdAt, updatedAt } = books
 
         let findReviews = await reviewModel.find({ bookId: bookId }).select({ isDeleted: 0, __v: 0 });

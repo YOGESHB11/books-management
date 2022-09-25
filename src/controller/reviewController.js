@@ -43,10 +43,10 @@ const createReviews = async function (req, res) {
             return res.status(400).send({ status: false, message: "Provide valid review details .." })
         }
         requestBody.review = review.trim()
+        console.log(rating)
+        if (!rating && rating != 0) return res.status(400).send({ status: false, message: "Rating is missing" })
 
-        if (!rating) return res.status(400).send({ status: false, message: "Rating is missing" })
-
-        if (typeof rating != 'number' || rating < 1 || rating > 5) // check this one in string and number also
+        if (typeof rating !== 'number' || rating < 1 || rating > 5 )
             return res.status(400).send({ status: false, message: 'Rating should be an Integer & between 1 to 5' })
 
         let createReview = await reviewModel.create(requestBody)
@@ -105,7 +105,7 @@ const updateReview = async function (req, res) {
 
         // check reviewedBy
         if (!reviewedBy) return res.status(400).send({ status: false, message: "Reviewer's name is missing" })
-        // if (!data.reviewedBy.match(/^[a-zA-Z,\-.\s]*$/)) return res.status(400).send({ status: false, msg: "enter a valid reviewer's name"})
+        
         if (!isValidReviewer) return res.status(400).send({ status: false, message: "enter a valid reviewer's name" })
         data.reviewedBy = reviewedBy.trim()
         const searchBook = await bookModel.findOne({ _id: bookId, isDeleted: false }).select({ ISBN: 0, __v: 0, deletedAt: 0 })
@@ -160,8 +160,8 @@ const deleteByReview = async function (req, res) {
         if (bookIdFromReview !== bookId) return res.status(400).send({ status: false, msg: "Cannot add a review , book is not present" })
 
         const deletereview = await reviewModel.findByIdAndUpdate(reviewId, { $set: { isDeleted: true } }, { new: true });
-        const reviewCount = await reviewModel.find({ bookId: bookId }).count()
-        const updateBook = await bookModel.findByIdAndUpdate({ _id: bookId }, { reviews: reviewCount - 1 }, { new: true })
+        const reviewCount = await reviewModel.find({ bookId: bookId , isDeleted :false}).count()
+        const updateBook = await bookModel.findByIdAndUpdate({ _id: bookId }, { reviews: reviewCount }, { new: true })
 
         return res.status(200).send({ status: true, msg: " review deleted successfully" })
     }
