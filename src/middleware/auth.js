@@ -42,9 +42,7 @@ const Authentication = function (req, res, next) {
             if (checkBookId['userId'].toString() !== decodedToken.UserId) {
                 return res.status(403).send({ status: false, message: "Unauthorized User Access!" })
             }
-  
-  
-            
+      
         }
         next();
         // if(!req.body){
@@ -76,5 +74,6 @@ const Authentication = function (req, res, next) {
     }
   
   }
-  //-----------------------------------------------------------------------------------------------------------------------//
+
+  
   module.exports= {Authentication,Authorisation};
